@@ -1,6 +1,8 @@
 import tkinter as tk
 import random
 import os
+import platform
+import time
 
 # -------------------- Config --------------------
 username = os.getlogin()
@@ -8,6 +10,19 @@ root = tk.Tk()
 root.title("Cool Fullscreen App")
 root.attributes("-fullscreen", True)
 root.configure(bg="black")
+
+# -------------------- Settings --------------------
+def settings():
+    settings_win = tk.Toplevel(root)
+    settings_win.geometry("400x300")
+    settings_win.title("Settings")
+    
+    def change_bg():
+        colors = ["black", "darkblue", "darkgreen", "purple", "gray"]
+        root.configure(bg=random.choice(colors))
+    
+    tk.Button(settings_win, text="Change Background Color", command=change_bg, width=30).pack(pady=10)
+    tk.Button(settings_win, text="Close", command=settings_win.destroy, width=30).pack(pady=10)
 
 # -------------------- Loading Screen --------------------
 loading_frame = tk.Frame(root, bg="black")
@@ -44,96 +59,76 @@ def show_welcome():
 
 # -------------------- Start Menu --------------------
 menu_frame = tk.Frame(root, bg="gray20", bd=2, relief="raised")
-menu_frame.place(x=-250, y=50, width=200, height=250)  # start offscreen
+menu_frame.place(x=-250, y=50, width=200, height=350)  # start offscreen
 
 menu_label = tk.Label(menu_frame, text="START MENU", font=("Arial", 16, "bold"), fg="white", bg="gray20")
 menu_label.pack(pady=10)
 
+# --- Funkce ---
+def show_system_info():
+    info = f"OS: {platform.system()} {platform.release()}\nUser: {username}"
+    info_win = tk.Toplevel(root)
+    info_win.geometry("300x150")
+    info_win.title("System Info")
+    tk.Label(info_win, text=info, font=("Arial", 12)).pack(pady=20)
+    tk.Button(info_win, text="Close", command=info_win.destroy).pack()
+
+def open_calculator():
+    calc_win = tk.Toplevel(root)
+    calc_win.title("Calculator")
+    calc_win.geometry("250x350")
+    entry = tk.Entry(calc_win, width=16, font=("Arial", 24), borderwidth=2, relief="ridge")
+    entry.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
+
+    def press(num):
+        entry.insert(tk.END, num)
+    
+    def clear():
+        entry.delete(0, tk.END)
+    
+    def equal():
+        try:
+            result = str(eval(entry.get()))
+            entry.delete(0, tk.END)
+            entry.insert(0, result)
+        except:
+            entry.delete(0, tk.END)
+            entry.insert(0, "Error")
+
+    buttons = [
+        ('7',1,0), ('8',1,1), ('9',1,2), ('/',1,3),
+        ('4',2,0), ('5',2,1), ('6',2,2), ('*',2,3),
+        ('1',3,0), ('2',3,1), ('3',3,2), ('-',3,3),
+        ('0',4,0), ('.',4,1), ('=',4,2), ('+',4,3),
+        ('C',5,0)
+    ]
+    for (text,row,col) in buttons:
+        if text == "=":
+            tk.Button(calc_win, text=text, width=5, height=2, command=equal).grid(row=row, column=col)
+        elif text == "C":
+            tk.Button(calc_win, text=text, width=5, height=2, command=clear).grid(row=row, column=col)
+        else:
+            tk.Button(calc_win, text=text, width=5, height=2, command=lambda t=text: press(t)).grid(row=row, column=col)
+
+def show_time():
+    time_win = tk.Toplevel(root)
+    time_win.title("Clock")
+    time_win.geometry("200x100")
+    clock_label = tk.Label(time_win, font=("Arial", 24))
+    clock_label.pack(pady=20)
+
+    def update_clock():
+        clock_label.config(text=time.strftime("%H:%M:%S"))
+        clock_label.after(1000, update_clock)
+    
+    update_clock()
+
 tk.Button(menu_frame, text="Shutdown", command=root.destroy, width=20).pack(pady=5)
 tk.Button(menu_frame, text="Restart", command=lambda: print("Restart pressed"), width=20).pack(pady=5)
-tk.Button(menu_frame, text="Settings", command=lambda: print("Settings pressed"), width=20).pack(pady=5)
-
-# -------------------- Console --------------------
-console_win = None
-
-def open_console():
-    global console_win
-    if console_win and console_win.winfo_exists():
-        close_console()
-        return
-
-    console_win = tk.Toplevel(root)
-    console_win.title("PythonOS Console")
-    console_win.geometry("0x0+200+150")
-    console_win.configure(bg="black")
-
-    # Output text
-    output = tk.Text(console_win, bg="black", fg="lime", insertbackground="lime", font=("Consolas", 12))
-    output.pack(side="top", fill="both", expand=True)
-
-    # Entry + Run button frame
-    bottom_frame = tk.Frame(console_win, bg="black", height=40)
-    bottom_frame.pack(side="bottom", fill="x")
-    bottom_frame.pack_propagate(0)  # fix height
-
-    entry = tk.Entry(bottom_frame, bg="black", fg="white", insertbackground="white", font=("Consolas", 12))
-    entry.pack(side="left", fill="x", expand=True, padx=5, pady=5)
-
-    run_btn = tk.Button(bottom_frame, text="RUN", command=lambda: run_command(), bg="gray30", fg="white", font=("Arial", 12, "bold"))
-    run_btn.pack(side="right", padx=5, pady=5)
-
-    def run_command(event=None):
-        cmd = entry.get().strip()
-        if cmd == "":
-            return
-        output.insert(tk.END, f">>> {cmd}\n")
-        if cmd.lower() == "help":
-            output.insert(tk.END, "Available commands: help, cls, echo [text], dir\n")
-        elif cmd.lower() == "cls":
-            output.delete("1.0", tk.END)
-        elif cmd.lower().startswith("echo "):
-            output.insert(tk.END, cmd[5:] + "\n")
-        elif cmd.lower() == "dir":
-            output.insert(tk.END, "file1.txt\nfile2.txt\nfolder1\n")
-        else:
-            try:
-                result = eval(cmd)
-                output.insert(tk.END, str(result) + "\n")
-            except Exception as e:
-                output.insert(tk.END, str(e) + "\n")
-        output.see(tk.END)
-        entry.delete(0, tk.END)
-
-    entry.bind("<Return>", run_command)
-
-    # Animace otevření (slide)
-    def animate_open(width=0, height=0):
-        if width < 600 or height < 400:
-            width = min(600, width + 20)
-            height = min(400, height + 15)
-            console_win.geometry(f"{width}x{height}+200+150")
-            console_win.after(10, lambda: animate_open(width, height))
-    animate_open()
-
-def close_console():
-    global console_win
-    if not console_win or not console_win.winfo_exists():
-        return
-
-    def animate_close(width, height):
-        if width > 0 or height > 0:
-            width = max(0, width - 20)
-            height = max(0, height - 15)
-            console_win.geometry(f"{width}x{height}+200+150")
-            console_win.after(10, lambda: animate_close(width, height))
-        else:
-            console_win.destroy()
-
-    w = console_win.winfo_width()
-    h = console_win.winfo_height()
-    animate_close(w, h)
-
-tk.Button(menu_frame, text="Console", command=open_console, width=20).pack(pady=5)
+tk.Button(menu_frame, text="Settings", command=settings, width=20).pack(pady=5)
+tk.Button(menu_frame, text="System Info", command=show_system_info, width=20).pack(pady=5)
+tk.Button(menu_frame, text="Calculator", command=open_calculator, width=20).pack(pady=5)
+tk.Button(menu_frame, text="Clock", command=show_time, width=20).pack(pady=5)
 
 # -------------------- Start Button --------------------
 start_btn = tk.Button(root, text="☰", font=("Arial", 25), bg="black", fg="white", bd=0)
