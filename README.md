@@ -1,15 +1,15 @@
 ## Usage
 
 ### Windows
-1. Spusť `install.bat`
-2. Spusť `pythonos.py`
+1. Run `install.bat`
+2. Run `pythonos.py`
 
 ### Linux
-1. Spusť v terminálu `sudo apt install python3-tk`
-2. Otevři `pythonos.py`
+1. Run in terminal: `sudo apt install python3-tk`
+2. Open `pythonos.py`
 
 ## Screenshot
 ![Start menu](loading.png)
 
 ## Test 1
-[Spustit video test 1](pythonostest1.mp4)
+[Play Test 1 Video](pythonostest1.mp4)
