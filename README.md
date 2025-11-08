@@ -12,6 +12,4 @@
 ![Start menu](loading.png)
 
 ## Test 1
-<video controls>
-  <source src="pythonostest1.mp4" type="video/mp4">
-</video>
+[Spustit video test 1](pythonostest1.mp4)
