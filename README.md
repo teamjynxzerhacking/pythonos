@@ -1,26 +1,17 @@
-Usage:
+## Usage
+
 ### Windows
-1 windows run install.bat 
-###
-2 run pythonos.py
+1. Spusť `install.bat`
+2. Spusť `pythonos.py`
+
 ### Linux
-
-1 run this in terminal  `sudo apt install python3-tk`
-###
-2. open pythonos.py
- 
-
+1. Spusť v terminálu `sudo apt install python3-tk`
+2. Otevři `pythonos.py`
 
 ## Screenshot
 ![Start menu](loading.png)
 
-
-
-## test 1
-![test 1] (pythonostest1.mp4)
-
-
-
-
-
-
+## Test 1
+<video controls>
+  <source src="pythonostest1.mp4" type="video/mp4">
+</video>
