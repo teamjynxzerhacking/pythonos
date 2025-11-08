@@ -1,3 +1,4 @@
-run the install.bat then run pythonos.py 
-![Start menu] (loading.png)
 
+
+## Screenshot
+![Start menu](loading.png)
