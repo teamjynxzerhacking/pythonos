@@ -1,3 +1,5 @@
+## ADDED
+sound , smother animation more soon
 ## Usage
 
 ### Windows
@@ -13,3 +15,4 @@
 
 ## Test 1
 [Play Test 1 Video](pythonostest1.mp4)
+
